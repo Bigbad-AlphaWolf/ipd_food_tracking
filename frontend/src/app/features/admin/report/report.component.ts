@@ -7,9 +7,10 @@ import { EmployeeService } from '../../../core/services/employee.service';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
-  selector: 'app-report',
-  templateUrl: './report.component.html',
-  styleUrl: './report.component.scss',
+    selector: 'app-report',
+    templateUrl: './report.component.html',
+    styleUrl: './report.component.scss',
+    standalone: false
 })
 export class ReportComponent implements OnInit {
   reports: MealReport[] = [];

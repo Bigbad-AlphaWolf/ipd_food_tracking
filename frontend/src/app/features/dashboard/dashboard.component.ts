@@ -7,9 +7,10 @@ import { MealService } from '../../core/services/meal.service';
 import { EmployeeService } from '../../core/services/employee.service';
 
 @Component({
-  selector: 'app-dashboard',
-  templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.scss',
+    selector: 'app-dashboard',
+    templateUrl: './dashboard.component.html',
+    styleUrl: './dashboard.component.scss',
+    standalone: false
 })
 export class DashboardComponent implements OnInit {
   employee: Employee | null = null;
