@@ -1,0 +1,28 @@
+.register-wrapper {
+  padding-top: 24px;
+}
+
+.page-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 22px;
+  margin-bottom: 8px;
+  color: #3f51b5;
+}
+
+.subtitle {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+mat-form-field {
+  margin-bottom: 8px;
+}
+
+.submit-btn {
+  margin-top: 8px;
+  height: 48px;
+  font-size: 16px;
+}

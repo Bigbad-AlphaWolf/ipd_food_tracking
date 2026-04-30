@@ -1,0 +1,15 @@
+# Frontend node_modules and build artifacts
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+
+# Editor
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

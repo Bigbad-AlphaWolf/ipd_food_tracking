@@ -1,0 +1,64 @@
+<div class="register-wrapper">
+  <h2 class="page-title">
+    <mat-icon>person_add</mat-icon>
+    Inscription
+  </h2>
+  <p class="subtitle">Vous n'êtes pas encore enregistré. Complétez votre profil.</p>
+
+  <mat-card>
+    <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <mat-form-field class="full-width" appearance="outline">
+          <mat-label>Numéro de téléphone</mat-label>
+          <mat-icon matPrefix>phone</mat-icon>
+          <input
+            matInput
+            type="tel"
+            formControlName="phoneNumber"
+            placeholder="+225 07 00 00 00 00"
+            autocomplete="tel"
+          />
+          <mat-error *ngIf="form.get('phoneNumber')?.hasError('required')">
+            Le numéro est obligatoire
+          </mat-error>
+          <mat-error *ngIf="form.get('phoneNumber')?.hasError('pattern')">
+            Numéro invalide (8-15 chiffres)
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="full-width" appearance="outline">
+          <mat-label>Nom complet</mat-label>
+          <mat-icon matPrefix>person</mat-icon>
+          <input
+            matInput
+            type="text"
+            formControlName="fullName"
+            placeholder="Prénom Nom"
+            autocomplete="name"
+          />
+          <mat-error *ngIf="form.get('fullName')?.hasError('required')">
+            Le nom est obligatoire
+          </mat-error>
+          <mat-error *ngIf="form.get('fullName')?.hasError('minlength')">
+            Minimum 2 caractères
+          </mat-error>
+        </mat-form-field>
+
+        <button
+          mat-raised-button
+          color="primary"
+          class="full-width submit-btn"
+          type="submit"
+          [disabled]="form.invalid || loading"
+        >
+          <mat-spinner *ngIf="loading" diameter="20" style="display:inline-block;margin-right:8px"></mat-spinner>
+          {{ loading ? 'Enregistrement...' : "S'inscrire" }}
+        </button>
+
+        <button mat-button class="full-width" type="button" routerLink="/">
+          Retour
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>
