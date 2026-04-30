@@ -41,9 +41,9 @@ export class RegisterComponent implements OnInit {
 
       // Check if phone already exists
       const existing = await this.employeeService.findByPhone(phoneNumber.trim());
-      if (existing) {
+      if (existing && existing.id) {
         this.snackBar.open('Ce numéro est déjà enregistré.', 'OK', { duration: 3000 });
-        sessionStorage.setItem('currentEmployee', JSON.stringify(existing));
+        sessionStorage.setItem('currentEmployeeId', existing.id);
         this.router.navigate(['/dashboard']);
         return;
       }
@@ -53,10 +53,12 @@ export class RegisterComponent implements OnInit {
         fullName: fullName.trim(),
       });
 
-      sessionStorage.setItem('currentEmployee', JSON.stringify(employee));
+      if (employee.id) {
+        sessionStorage.setItem('currentEmployeeId', employee.id);
+      }
       this.snackBar.open('Inscription réussie !', '', { duration: 2000 });
       this.router.navigate(['/dashboard']);
-    } catch (err) {
+    } catch {
       this.snackBar.open("Erreur lors de l'inscription. Réessayez.", 'OK', { duration: 3000 });
     } finally {
       this.loading = false;

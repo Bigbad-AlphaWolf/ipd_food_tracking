@@ -4,6 +4,8 @@ import {
   collection,
   addDoc,
   getDocs,
+  getDoc,
+  doc,
   query,
   where,
   Timestamp,
@@ -23,8 +25,15 @@ export class EmployeeService {
     const q = query(col, where('phoneNumber', '==', phoneNumber));
     const snapshot = await getDocs(q);
     if (snapshot.empty) return null;
-    const doc = snapshot.docs[0];
-    return { id: doc.id, ...doc.data() } as Employee;
+    const d = snapshot.docs[0];
+    return { id: d.id, ...d.data() } as Employee;
+  }
+
+  async findById(id: string): Promise<Employee | null> {
+    const docRef = doc(this.firestore, this.collectionName, id);
+    const snapshot = await getDoc(docRef);
+    if (!snapshot.exists()) return null;
+    return { id: snapshot.id, ...snapshot.data() } as Employee;
   }
 
   async register(employee: Omit<Employee, 'id' | 'createdAt'>): Promise<Employee> {
@@ -39,6 +48,6 @@ export class EmployeeService {
   async getAll(): Promise<Employee[]> {
     const col = collection(this.firestore, this.collectionName);
     const snapshot = await getDocs(col);
-    return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Employee));
+    return snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as Employee));
   }
 }

@@ -30,15 +30,15 @@ export class HomeComponent {
     try {
       const phone = this.form.value.phoneNumber.trim();
       const employee = await this.employeeService.findByPhone(phone);
-      if (employee) {
-        // Store employee in session and go to dashboard
-        sessionStorage.setItem('currentEmployee', JSON.stringify(employee));
+      if (employee && employee.id) {
+        // Store only the employee ID in session storage
+        sessionStorage.setItem('currentEmployeeId', employee.id);
         this.router.navigate(['/dashboard']);
       } else {
         // Not found – go to register with phone pre-filled
         this.router.navigate(['/register'], { state: { phoneNumber: phone } });
       }
-    } catch (err) {
+    } catch {
       this.snackBar.open('Erreur de connexion. Réessayez.', 'OK', { duration: 3000 });
     } finally {
       this.loading = false;

@@ -4,6 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Employee } from '../../core/models/employee.model';
 import { Meal } from '../../core/models/meal.model';
 import { MealService } from '../../core/services/meal.service';
+import { EmployeeService } from '../../core/services/employee.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -36,25 +37,26 @@ export class DashboardComponent implements OnInit {
 
   constructor(
     private mealService: MealService,
+    private employeeService: EmployeeService,
     private router: Router,
     private snackBar: MatSnackBar
   ) {}
 
-  ngOnInit(): void {
-    const stored = sessionStorage.getItem('currentEmployee');
-    if (!stored) {
+  async ngOnInit(): Promise<void> {
+    const employeeId = sessionStorage.getItem('currentEmployeeId');
+    if (!employeeId) {
       this.router.navigate(['/']);
       return;
     }
-    this.employee = JSON.parse(stored) as Employee;
-    this.loadTodayMeal();
-  }
-
-  async loadTodayMeal(): Promise<void> {
-    if (!this.employee?.id) return;
     this.loading = true;
     try {
-      this.todayMeal = await this.mealService.getTodayMeal(this.employee.id);
+      this.employee = await this.employeeService.findById(employeeId);
+      if (!this.employee) {
+        sessionStorage.removeItem('currentEmployeeId');
+        this.router.navigate(['/']);
+        return;
+      }
+      this.todayMeal = await this.mealService.getTodayMeal(employeeId);
     } catch {
       this.snackBar.open('Erreur lors du chargement.', 'OK', { duration: 3000 });
     } finally {
@@ -78,7 +80,7 @@ export class DashboardComponent implements OnInit {
   }
 
   logout(): void {
-    sessionStorage.removeItem('currentEmployee');
+    sessionStorage.removeItem('currentEmployeeId');
     this.router.navigate(['/']);
   }
 }

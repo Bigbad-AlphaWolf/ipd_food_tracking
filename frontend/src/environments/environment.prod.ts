@@ -8,5 +8,7 @@ export const environment = {
     messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
     appId: 'YOUR_APP_ID',
   },
-  adminPassword: 'admin123', // Change this in production
+  // Set a strong admin password before deploying.
+  // This value MUST be changed from the placeholder before use.
+  adminPassword: 'CHANGE_ME_BEFORE_DEPLOY',
 };
