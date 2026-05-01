@@ -5,6 +5,7 @@ import { Employee } from '../../core/models/employee.model';
 import { Meal } from '../../core/models/meal.model';
 import { MealService } from '../../core/services/meal.service';
 import { EmployeeService } from '../../core/services/employee.service';
+import { LoggerService } from '../../core/services/logger.service';
 
 @Component({
     selector: 'app-dashboard',
@@ -40,7 +41,8 @@ export class DashboardComponent implements OnInit {
     private mealService: MealService,
     private employeeService: EmployeeService,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private logger: LoggerService
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -52,13 +54,15 @@ export class DashboardComponent implements OnInit {
     this.loading = true;
     try {
       this.employee = await this.employeeService.findById(employeeId);
+      this.logger.log('DashboardComponent: Employee loaded', this.employee);
       if (!this.employee) {
         sessionStorage.removeItem('currentEmployeeId');
         this.router.navigate(['/']);
         return;
       }
       this.todayMeal = await this.mealService.getTodayMeal(employeeId);
-    } catch {
+    } catch(error) {
+      console.error('Erreur lors du chargement:', error);
       this.snackBar.open('Erreur lors du chargement.', 'OK', { duration: 3000 });
     } finally {
       this.loading = false;

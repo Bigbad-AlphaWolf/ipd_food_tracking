@@ -6,7 +6,7 @@ dist/
 .angular/
 
 # Environment (keep template but not real secrets)
-# src/environments/environment.ts   ← keep this (has placeholder values)
+src/environments/environment.ts   ← keep this (has placeholder values)
 
 # Editor
 .vscode/

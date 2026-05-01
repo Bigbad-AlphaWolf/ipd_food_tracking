@@ -1,0 +1,12 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "type": "command", 
+        "command": "./scripts/validate-security.sh",
+        "timeout": 10,
+        "cwd": ".github/hooks"
+      }
+    ]
+  }
+}

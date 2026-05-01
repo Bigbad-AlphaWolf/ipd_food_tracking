@@ -4,9 +4,14 @@
       <mat-icon>assessment</mat-icon>
       Rapport mensuel
     </h2>
-    <button mat-icon-button (click)="logout()" title="Déconnexion">
-      <mat-icon>logout</mat-icon>
-    </button>
+    <div class="header-actions">
+      <button mat-icon-button (click)="testFirestoreConnection()" title="Tester la connexion Firestore" [disabled]="loading">
+        <mat-icon>wifi_protected_setup</mat-icon>
+      </button>
+      <button mat-icon-button (click)="logout()" title="Déconnexion">
+        <mat-icon>logout</mat-icon>
+      </button>
+    </div>
   </div>
 
   <!-- Period selector -->

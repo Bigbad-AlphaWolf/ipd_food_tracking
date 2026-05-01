@@ -96,7 +96,6 @@ export class MealService {
     month: number
   ): Promise<MealReport[]> {
     const reports = await this.getMonthlySummary(year, month);
-    const empMap = new Map(employees.map((e) => [e.id, e]));
 
     // Include all employees (even those with 0 meals)
     const allReports: MealReport[] = employees.map((emp) => {
