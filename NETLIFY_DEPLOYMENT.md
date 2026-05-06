@@ -49,7 +49,7 @@ netlify deploy --prod
 
 1. Connect your repository to Netlify
 2. Set build command: `cd frontend && npm ci && npm run build:prod`
-3. Set publish directory: `frontend/dist/frontend`
+3. Set publish directory: `frontend/dist/frontend/browser`
 4. Add environment variables in Site Settings > Environment Variables:
    - `NG_APP_FIREBASE_API_KEY`
    - `NG_APP_FIREBASE_AUTH_DOMAIN`
@@ -153,6 +153,21 @@ Netlify Environment Variables
 
 ## 🐛 Troubleshooting
 
+### "ng: not found" Error in CI
+If you get `sh: 1: ng: not found` during Netlify deployment:
+
+**Cause**: Angular CLI is not installed globally in CI environments.
+
+**Solution**: The package.json scripts now use `npx ng` instead of `ng` directly. Make sure your package.json contains:
+```json
+{
+  "scripts": {
+    "ng": "npx ng",
+    "build:prod": "node scripts/load-env.js && npx ng build --configuration=production"
+  }
+}
+```
+
 ### Missing Environment Variables
 - Check Netlify Site Settings > Environment Variables
 - Ensure all variables start with `NG_APP_` prefix
@@ -170,7 +185,7 @@ Netlify Environment Variables
 
 ### Deployment Issues
 - Verify `netlify.toml` configuration
-- Check publish directory setting
+- Check publish directory setting: `frontend/dist/frontend/browser`
 - Ensure build command includes `cd frontend`
 
 ## 📚 Additional Resources
