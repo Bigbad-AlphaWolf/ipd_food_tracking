@@ -1,0 +1,46 @@
+<div class="home-wrapper">
+  <div class="logo-section">
+    <div class="logo-icon">🍽️</div>
+    <h1>IPD Repas</h1>
+    <p>Suivi des repas au restaurant</p>
+  </div>
+
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Bienvenue</mat-card-title>
+      <mat-card-subtitle>Entrez votre numéro de téléphone pour continuer</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <mat-form-field class="full-width" appearance="outline">
+          <mat-label>Numéro de téléphone</mat-label>
+          <mat-icon matPrefix>phone</mat-icon>
+          <input
+            matInput
+            type="tel"
+            formControlName="phoneNumber"
+            placeholder="+225 07 00 00 00 00"
+            autocomplete="tel"
+          />
+          <mat-error *ngIf="form.get('phoneNumber')?.hasError('required')">
+            Le numéro est obligatoire
+          </mat-error>
+          <mat-error *ngIf="form.get('phoneNumber')?.hasError('pattern')">
+            Numéro invalide (8-15 chiffres)
+          </mat-error>
+        </mat-form-field>
+
+        <button
+          mat-raised-button
+          color="primary"
+          class="full-width submit-btn"
+          type="submit"
+          [disabled]="form.invalid || loading"
+        >
+          <mat-spinner *ngIf="loading" diameter="20" style="display:inline-block;margin-right:8px"></mat-spinner>
+          {{ loading ? 'Chargement...' : 'Continuer' }}
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

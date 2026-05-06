@@ -1,0 +1,88 @@
+<div class="dashboard-wrapper">
+  <!-- Employee header -->
+  <mat-card class="employee-card" *ngIf="employee">
+    <mat-card-content>
+      <div class="employee-info">
+        <div class="avatar">
+          {{ employee.fullName.charAt(0).toUpperCase() }}
+        </div>
+        <div class="details">
+          <h2>{{ employee.fullName }}</h2>
+          <p>
+            <mat-icon inline>phone</mat-icon>
+            {{ employee.phoneNumber }}
+          </p>
+        </div>
+        <button mat-icon-button (click)="logout()" title="Déconnexion">
+          <mat-icon>logout</mat-icon>
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Today's date -->
+  <div class="date-label">
+    <mat-icon>calendar_today</mat-icon>
+    <span>{{ dateLabel }}</span>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-container" *ngIf="loading">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <!-- Already recorded -->
+  <mat-card *ngIf="!loading && hasRecordedToday" class="status-card" [class.ate]="ateToday" [class.not-ate]="!ateToday">
+    <mat-card-content>
+      <div class="status-display">
+        <span class="status-icon">{{ ateToday ? '✅' : '❌' }}</span>
+        <div>
+          <h3>{{ ateToday ? 'Repas pris' : 'Repas non pris' }}</h3>
+          <p>Votre présence a été enregistrée pour aujourd'hui.</p>
+        </div>
+      </div>
+      <button mat-stroked-button class="full-width change-btn" (click)="recordMeal(!ateToday)" [disabled]="submitting">
+        {{ ateToday ? "Je n'ai pas mangé aujourd'hui" : "J'ai mangé aujourd'hui" }}
+      </button>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Not yet recorded -->
+  <mat-card *ngIf="!loading && !hasRecordedToday" class="meal-question-card">
+    <mat-card-header>
+      <mat-card-title>Avez-vous mangé au restaurant aujourd'hui ?</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="meal-buttons">
+        <button
+          mat-raised-button
+          color="primary"
+          class="meal-btn yes-btn"
+          (click)="recordMeal(true)"
+          [disabled]="submitting"
+        >
+          <mat-icon>restaurant</mat-icon>
+          <span>Oui, j'ai mangé</span>
+        </button>
+        <button
+          mat-raised-button
+          color="warn"
+          class="meal-btn no-btn"
+          (click)="recordMeal(false)"
+          [disabled]="submitting"
+        >
+          <mat-icon>no_meals</mat-icon>
+          <span>Non, pas aujourd'hui</span>
+        </button>
+      </div>
+      <div class="loading-container" *ngIf="submitting">
+        <mat-spinner diameter="30"></mat-spinner>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <div class="meal-price-info">
+    <mat-icon>info</mat-icon>
+    Prix du repas : <strong>750 XOF</strong>
+  </div>
+</div>

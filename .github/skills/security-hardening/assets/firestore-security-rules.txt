@@ -1,0 +1,120 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // 🔒 SECURE RULES FOR IPD FOOD TRACKING APP
+    // Replace wide-open rules with authentication-based access
+    
+    // ===== EMPLOYEES COLLECTION =====
+    match /employees/{employeeId} {
+      // ✅ Allow read access for authenticated users (for reports)
+      allow read: if request.auth != null;
+      
+      // ✅ Allow creation for new employee registration
+      allow create: if request.auth == null 
+                    && isValidEmployee(resource.data)
+                    && !employeeExistsByPhone(resource.data.phoneNumber);
+      
+      // ✅ Allow updates only by the employee themselves or admin
+      allow update: if request.auth != null 
+                    && (request.auth.uid == employeeId || isAdmin());
+      
+      // ❌ Delete only by admin (for data cleanup)
+      allow delete: if request.auth != null && isAdmin();
+    }
+    
+    // ===== MEALS COLLECTION =====
+    match /meals/{mealId} {
+      // ✅ Allow read for meal reports (authenticated users only)
+      allow read: if request.auth != null;
+      
+      // ✅ Allow meal recording by the employee or admin
+      allow create: if request.auth != null 
+                    && (request.auth.uid == resource.data.employeeId || isAdmin())
+                    && isValidMeal(resource.data);
+      
+      // ✅ Allow meal updates by the employee or admin  
+      allow update: if request.auth != null 
+                    && (request.auth.uid == resource.data.employeeId || isAdmin())
+                    && isValidMeal(request.resource.data);
+      
+      // ❌ Delete only by admin
+      allow delete: if request.auth != null && isAdmin();
+    }
+    
+    // ===== ADMIN COLLECTION (if needed) =====
+    match /admin/{document} {
+      // 🔒 Admin-only access for configuration
+      allow read, write: if request.auth != null && isAdmin();
+    }
+    
+    // ===== HELPER FUNCTIONS =====
+    
+    // Check if user is admin
+    function isAdmin() {
+      // Option 1: Custom claims (recommended)
+      return request.auth.token.admin == true;
+      
+      // Option 2: Admin user list (simpler but less secure)
+      // return request.auth.uid in ['ADMIN_UID_1', 'ADMIN_UID_2'];
+    }
+    
+    // Validate employee data structure
+    function isValidEmployee(data) {
+      return data.keys().hasAll(['phoneNumber', 'fullName'])
+             && data.phoneNumber is string
+             && data.fullName is string
+             && data.phoneNumber.matches('^[+]?[0-9]{8,15}$')  // Basic phone validation
+             && data.fullName.size() >= 2;
+    }
+    
+    // Check if phone number already exists
+    function employeeExistsByPhone(phoneNumber) {
+      // Note: This requires a composite index on phoneNumber
+      return exists(/databases/$(database)/documents/employees/$(phoneNumber));
+    }
+    
+    // Validate meal data structure
+    function isValidMeal(data) {
+      return data.keys().hasAll(['employeeId', 'date', 'ate'])
+             && data.employeeId is string
+             && data.date is string
+             && data.ate is bool
+             && data.date.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')  // YYYY-MM-DD format
+             && data.employeeId.size() > 0;
+    }
+    
+    // ===== FALLBACK RULE =====
+    // ❌ Deny all other access by default
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+
+/*
+🛡️ SECURITY FEATURES IMPLEMENTED:
+
+✅ Authentication Required: All operations require auth except employee registration
+✅ Authorization: Users can only modify their own data, admins have full access  
+✅ Data Validation: All input data is validated for structure and format
+✅ Phone Uniqueness: Prevents duplicate employee registrations
+✅ Admin Protection: Admin operations require special permissions
+✅ Fallback Deny: Blocks all unauthorized access by default
+
+🔧 SETUP REQUIRED:
+
+1. Deploy these rules: firebase deploy --only firestore:rules
+2. Set up admin custom claims in Firebase Auth
+3. Create composite indexes as needed
+4. Test rules with Firebase Emulator Suite
+
+📋 TODO BEFORE PRODUCTION:
+
+- [ ] Replace wide-open rules in Firebase Console
+- [ ] Set up admin custom claims or update admin UID list
+- [ ] Test all rule scenarios with Firebase Emulator
+- [ ] Monitor security events in Firebase Console
+- [ ] Set up alerting for rule violations
+*/

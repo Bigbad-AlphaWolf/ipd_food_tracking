@@ -1,0 +1,118 @@
+<div class="report-wrapper">
+  <div class="report-header">
+    <h2>
+      <mat-icon>assessment</mat-icon>
+      Rapport mensuel
+    </h2>
+    <div class="header-actions">
+      <button mat-icon-button (click)="testFirestoreConnection()" title="Tester la connexion Firestore" [disabled]="loading">
+        <mat-icon>wifi_protected_setup</mat-icon>
+      </button>
+      <button mat-icon-button (click)="logout()" title="Déconnexion">
+        <mat-icon>logout</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Period selector -->
+  <mat-card class="filter-card">
+    <mat-card-content>
+      <div class="filter-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Mois</mat-label>
+          <mat-select [(ngModel)]="selectedMonth" (ngModelChange)="loadReport()">
+            <mat-option *ngFor="let m of months" [value]="m.value">{{ m.label }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Année</mat-label>
+          <mat-select [(ngModel)]="selectedYear" (ngModelChange)="loadReport()">
+            <mat-option *ngFor="let y of years" [value]="y">{{ y }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Loading -->
+  <div class="loading-container" *ngIf="loading">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <!-- Summary cards -->
+  <div class="summary-cards" *ngIf="!loading">
+    <mat-card class="summary-card">
+      <mat-card-content>
+        <div class="summary-value">{{ reports.length }}</div>
+        <div class="summary-label">Employés</div>
+      </mat-card-content>
+    </mat-card>
+    <mat-card class="summary-card">
+      <mat-card-content>
+        <div class="summary-value">{{ totalDays }}</div>
+        <div class="summary-label">Total jours</div>
+      </mat-card-content>
+    </mat-card>
+    <mat-card class="summary-card highlight">
+      <mat-card-content>
+        <div class="summary-value">{{ totalAmount | number }}</div>
+        <div class="summary-label">Total XOF</div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Data table -->
+  <mat-card *ngIf="!loading" class="table-card">
+    <mat-card-header>
+      <mat-card-title>{{ selectedMonthLabel }} {{ selectedYear }}</mat-card-title>
+      <div class="spacer"></div>
+      <button mat-raised-button color="accent" (click)="exportCSV()" [disabled]="reports.length === 0">
+        <mat-icon>download</mat-icon>
+        Exporter CSV
+      </button>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="table-container" *ngIf="reports.length > 0; else noData">
+        <table mat-table [dataSource]="reports" class="full-width">
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Nom</th>
+            <td mat-cell *matCellDef="let row">{{ row.employeeName }}</td>
+            <td mat-footer-cell *matFooterCellDef><strong>TOTAL</strong></td>
+          </ng-container>
+
+          <ng-container matColumnDef="phone">
+            <th mat-header-cell *matHeaderCellDef>Téléphone</th>
+            <td mat-cell *matCellDef="let row">{{ row.phoneNumber }}</td>
+            <td mat-footer-cell *matFooterCellDef></td>
+          </ng-container>
+
+          <ng-container matColumnDef="days">
+            <th mat-header-cell *matHeaderCellDef>Jours</th>
+            <td mat-cell *matCellDef="let row">
+              <span class="days-badge" [class.zero]="row.daysEaten === 0">{{ row.daysEaten }}</span>
+            </td>
+            <td mat-footer-cell *matFooterCellDef><strong>{{ totalDays }}</strong></td>
+          </ng-container>
+
+          <ng-container matColumnDef="amount">
+            <th mat-header-cell *matHeaderCellDef>Montant (XOF)</th>
+            <td mat-cell *matCellDef="let row">{{ row.amount | number }}</td>
+            <td mat-footer-cell *matFooterCellDef><strong>{{ totalAmount | number }}</strong></td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          <tr mat-footer-row *matFooterRowDef="displayedColumns"></tr>
+        </table>
+      </div>
+
+      <ng-template #noData>
+        <div class="no-data">
+          <mat-icon>inbox</mat-icon>
+          <p>Aucune donnée pour cette période.</p>
+        </div>
+      </ng-template>
+    </mat-card-content>
+  </mat-card>
+</div>
