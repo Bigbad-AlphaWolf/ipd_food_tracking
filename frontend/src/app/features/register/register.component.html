@@ -15,14 +15,14 @@
             matInput
             type="tel"
             formControlName="phoneNumber"
-            placeholder="+225 07 00 00 00 00"
+            placeholder="+221 77 123 45 67"
             autocomplete="tel"
           />
           <mat-error *ngIf="form.get('phoneNumber')?.hasError('required')">
             Le numéro est obligatoire
           </mat-error>
           <mat-error *ngIf="form.get('phoneNumber')?.hasError('pattern')">
-            Numéro invalide (8-15 chiffres)
+            Numéro invalide (format: +221 77 123 45 67)
           </mat-error>
         </mat-form-field>
 
