@@ -3,7 +3,7 @@
   command = "npm ci && npm run build:prod"
   
   # Output directory (where Angular builds to)
-  publish = "frontend/dist/frontend/browser"
+  publish = "dist/frontend/browser"
   
   # Node.js version
   node_bundler = "esbuild"
