@@ -1,13 +1,3 @@
-[build]
-  # Build command for production deployment
-  command = "cd frontend && npm ci && npm run build:prod"
-  
-  # Output directory (where Angular builds to)
-  publish = "frontend/dist/frontend"
-  
-  # Node.js version
-  node_bundler = "esbuild"
-
 [build.environment]
   # Ensure environment variables are loaded during build
   NODE_ENV = "production"
