@@ -1,19 +1,15 @@
+// Production environment - reads from environment variables
 export const environment = {
   production: true,
   firebase: {
-    // IMPORTANT: Update these with your production Firebase config
-    // Get from Firebase Console > Project Settings > Your apps
-    apiKey: 'UPDATE-WITH-PRODUCTION-API-KEY',
-    authDomain: 'update-with-production-project.firebaseapp.com',
-    projectId: 'update-with-production-project-id',
-    storageBucket: 'update-with-production-project-id.appspot.com',
-    messagingSenderId: 'UPDATE-WITH-PRODUCTION-SENDER-ID',
-    appId: 'UPDATE-WITH-PRODUCTION-APP-ID',
+    apiKey: (globalThis as any)?.NG_APP_FIREBASE_API_KEY || '',
+    authDomain: (globalThis as any)?.NG_APP_FIREBASE_AUTH_DOMAIN || '',
+    projectId: (globalThis as any)?.NG_APP_FIREBASE_PROJECT_ID || '',
+    storageBucket: (globalThis as any)?.NG_APP_FIREBASE_STORAGE_BUCKET || '',
+    messagingSenderId: (globalThis as any)?.NG_APP_FIREBASE_MESSAGING_SENDER_ID || '',
+    appId: (globalThis as any)?.NG_APP_FIREBASE_APP_ID || '',
   },
-  
-  // SECURITY: Use a secure password for production
-  // Generate one using: openssl rand -base64 24 | tr -d "=+/" | cut -c1-24
-  adminPassword: 'GENERATE-SECURE-PASSWORD-FOR-PRODUCTION',
+  adminPassword: (globalThis as any)?.NG_APP_ADMIN_PASSWORD || '',
   
   // Production security configuration
   security: {
@@ -31,7 +27,6 @@ export const environment = {
 };
 
 // Production validation
-if (environment.firebase.apiKey.includes('UPDATE-WITH') ||
-    environment.adminPassword.includes('GENERATE-SECURE')) {
-  console.error('SECURITY WARNING: Update production environment values before deployment');
+if (!environment.firebase.apiKey || !environment.adminPassword) {
+  console.error('CONFIGURATION ERROR: Required environment variables not set. Check NG_APP_* variables.');
 }

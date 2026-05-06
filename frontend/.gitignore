@@ -5,8 +5,13 @@ node_modules/
 dist/
 .angular/
 
-# Environment (keep template but not real secrets)
-src/environments/environment.ts   ← keep this (has placeholder values)
+# Environment files with sensitive data
+.env
+src/assets/env.js
+
+# Keep template files
+# .env.example (template - should be committed)
+# src/environments/environment.ts (has placeholder values - should be committed)
 
 # Editor
 .vscode/
