@@ -2,12 +2,12 @@
   "name": "frontend",
   "version": "0.0.0",
   "scripts": {
-    "ng": "ng",
-    "start": "node scripts/load-env.js && ng serve",
-    "build": "node scripts/load-env.js && ng build",
-    "build:prod": "node scripts/load-env.js && ng build --configuration=production",
-    "watch": "node scripts/load-env.js && ng build --watch --configuration development",
-    "test": "ng test"
+    "ng": "npx ng",
+    "start": "node scripts/load-env.js && npx ng serve",
+    "build": "node scripts/load-env.js && npx ng build",
+    "build:prod": "node scripts/load-env.js && npx ng build --configuration=production",
+    "watch": "node scripts/load-env.js && npx ng build --watch --configuration development",
+    "test": "npx ng test"
   },
   "private": true,
   "dependencies": {

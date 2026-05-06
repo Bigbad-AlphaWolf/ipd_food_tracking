@@ -1,17 +1,17 @@
 [build]
   # Build command for production deployment
-  command = "npm ci && npm run build:prod"
-  
+  command = "cd frontend && npm ci && npm run build:prod"
+
   # Output directory (where Angular builds to)
-  publish = "dist/frontend/browser"
-  
+  publish = "frontend/dist/frontend/browser"
+
   # Node.js version
   node_bundler = "esbuild"
 
 [build.environment]
   # Ensure environment variables are loaded during build
   NODE_ENV = "production"
-  
+
 # Redirect rules for Angular SPA
 [[redirects]]
   from = "/*"
