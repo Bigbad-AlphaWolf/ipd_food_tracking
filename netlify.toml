@@ -1,7 +1,3 @@
-[build.environment]
-  # Ensure environment variables are loaded during build
-  NODE_ENV = "production"
-
 # Redirect rules for Angular SPA
 [[redirects]]
   from = "/*"
