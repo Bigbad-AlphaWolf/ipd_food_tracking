@@ -20,6 +20,33 @@
     </mat-card-content>
   </mat-card>
 
+  <!-- Date selection -->
+  <mat-card class="date-selector-card">
+    <mat-card-content>
+      <div class="date-selector">
+        <mat-form-field appearance="outline" class="date-field">
+          <mat-label>Sélectionner une date</mat-label>
+          <input matInput
+                 [matDatepicker]="picker"
+                 [(ngModel)]="selectedDate"
+                 (dateChange)="onDateChange($event.value)"
+                 [max]="maxDate"
+                 readonly>
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+        <button mat-stroked-button
+                color="primary"
+                class="today-btn"
+                (click)="selectToday()"
+                [disabled]="isToday(selectedDate)">
+          <mat-icon>today</mat-icon>
+          Aujourd'hui
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
   <!-- Today's date -->
   <div class="date-label">
     <mat-icon>calendar_today</mat-icon>
@@ -32,25 +59,25 @@
   </div>
 
   <!-- Already recorded -->
-  <mat-card *ngIf="!loading && hasRecordedToday" class="status-card" [class.ate]="ateToday" [class.not-ate]="!ateToday">
+  <mat-card *ngIf="!loading && hasRecordedForSelectedDate" class="status-card" [class.ate]="ateOnSelectedDate" [class.not-ate]="!ateOnSelectedDate">
     <mat-card-content>
       <div class="status-display">
-        <span class="status-icon">{{ ateToday ? '✅' : '❌' }}</span>
+        <span class="status-icon">{{ ateOnSelectedDate ? '✅' : '❌' }}</span>
         <div>
-          <h3>{{ ateToday ? 'Repas pris' : 'Repas non pris' }}</h3>
-          <p>Votre présence a été enregistrée pour aujourd'hui.</p>
+          <h3>{{ ateOnSelectedDate ? 'Repas pris' : 'Repas non pris' }}</h3>
+          <p>Votre présence a été enregistrée pour cette date.</p>
         </div>
       </div>
-      <button mat-stroked-button class="full-width change-btn" (click)="recordMeal(!ateToday)" [disabled]="submitting">
-        {{ ateToday ? "Je n'ai pas mangé aujourd'hui" : "J'ai mangé aujourd'hui" }}
+      <button mat-stroked-button class="full-width change-btn" (click)="recordMeal(!ateOnSelectedDate)" [disabled]="submitting">
+        {{ ateOnSelectedDate ? "Je n'ai pas mangé ce jour" : "J'ai mangé ce jour" }}
       </button>
     </mat-card-content>
   </mat-card>
 
   <!-- Not yet recorded -->
-  <mat-card *ngIf="!loading && !hasRecordedToday" class="meal-question-card">
+  <mat-card *ngIf="!loading && !hasRecordedForSelectedDate" class="meal-question-card">
     <mat-card-header>
-      <mat-card-title>Avez-vous mangé au restaurant aujourd'hui ?</mat-card-title>
+      <mat-card-title>Avez-vous mangé au restaurant ce jour ?</mat-card-title>
     </mat-card-header>
     <mat-card-content>
       <div class="meal-buttons">
@@ -72,7 +99,7 @@
           [disabled]="submitting"
         >
           <mat-icon>no_meals</mat-icon>
-          <span>Non, pas aujourd'hui</span>
+          <span>Non, je n'ai pas mangé</span>
         </button>
       </div>
       <div class="loading-container" *ngIf="submitting">

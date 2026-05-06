@@ -25,11 +25,46 @@ export class HomeComponent {
     });
   }
 
+  /**
+   * Normalizes phone number by adding +221 prefix if not present
+   */
+  private normalizePhoneNumber(phone: string): string {
+    const cleaned = phone.trim().replace(/\s+/g, '');
+    
+    // If already has +221, return as is
+    if (cleaned.startsWith('+221')) {
+      return cleaned;
+    }
+    
+    // If starts with 221 (without +), add the +
+    if (cleaned.startsWith('221')) {
+      return '+' + cleaned;
+    }
+    
+    // If starts with other country code, return as is
+    if (cleaned.startsWith('+')) {
+      return cleaned;
+    }
+    
+    // For local numbers (starting with 7, 3, or 0), add +221
+    if (/^[0-9]/.test(cleaned)) {
+      // Remove leading 0 if present (common in local format)
+      const localNumber = cleaned.startsWith('0') ? cleaned.substring(1) : cleaned;
+      return '+221' + localNumber;
+    }
+    
+    return cleaned;
+  }
+
   async onSubmit(): Promise<void> {
     if (this.form.invalid) return;
     this.loading = true;
     try {
-      const phone = this.form.value.phoneNumber.trim();
+      const phone = this.normalizePhoneNumber(this.form.value.phoneNumber);
+      
+      // Update form with normalized phone number
+      this.form.patchValue({ phoneNumber: phone }, { emitEvent: false });
+      
       const employee = await this.employeeService.findByPhone(phone);
       if (employee && employee.id) {
         // Store only the employee ID in session storage

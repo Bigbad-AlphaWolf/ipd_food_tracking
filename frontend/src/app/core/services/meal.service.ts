@@ -29,11 +29,15 @@ export class MealService {
 
   async getTodayMeal(employeeId: string): Promise<Meal | null> {
     const today = this.dateToString(new Date());
+    return this.getMealForDate(employeeId, today);
+  }
+
+  async getMealForDate(employeeId: string, dateString: string): Promise<Meal | null> {
     const col = collection(this.firestore, this.collectionName);
     const q = query(
       col,
       where('employeeId', '==', employeeId),
-      where('date', '==', today)
+      where('date', '==', dateString)
     );
     const snapshot = await getDocs(q);
     if (snapshot.empty) return null;
@@ -41,19 +45,19 @@ export class MealService {
     return { id: d.id, ...d.data() } as Meal;
   }
 
-  async recordMeal(employeeId: string, ate: boolean): Promise<void> {
-    const today = this.dateToString(new Date());
+  async recordMeal(employeeId: string, ate: boolean, date?: Date): Promise<void> {
+    const dateString = this.dateToString(date || new Date());
     const col = collection(this.firestore, this.collectionName);
 
-    // Check if record already exists for today
-    const existing = await this.getTodayMeal(employeeId);
+    // Check if record already exists for the specified date
+    const existing = await this.getMealForDate(employeeId, dateString);
     if (existing && existing.id) {
       const docRef = doc(this.firestore, this.collectionName, existing.id);
       await setDoc(docRef, { ate }, { merge: true });
     } else {
       await addDoc(col, {
         employeeId,
-        date: today,
+        date: dateString,
         ate,
         createdAt: Timestamp.now(),
       });
