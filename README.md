@@ -27,22 +27,26 @@ Application web de suivi des repas au restaurant pour les employés IPD.
 1. Créez un projet sur [Firebase Console](https://console.firebase.google.com)
 2. Activez **Firestore Database** (mode production)
 3. Créez une application web dans les paramètres du projet
-4. Copiez la configuration Firebase dans `frontend/src/environments/environment.ts` :
+4. Configurez les variables d'environnement :
 
-```typescript
-export const environment = {
-  production: false,
-  firebase: {
-    apiKey: 'VOTRE_API_KEY',
-    authDomain: 'VOTRE_PROJECT_ID.firebaseapp.com',
-    projectId: 'VOTRE_PROJECT_ID',
-    storageBucket: 'VOTRE_PROJECT_ID.appspot.com',
-    messagingSenderId: 'VOTRE_MESSAGING_SENDER_ID',
-    appId: 'VOTRE_APP_ID',
-  },
-  adminPassword: 'votre_mot_de_passe_admin',
-};
+```bash
+cd frontend
+cp .env.example .env
+# Modifiez .env avec vos vraies valeurs Firebase
 ```
+
+Variables d'environnement requises dans `.env` :
+```env
+NG_APP_FIREBASE_API_KEY=your-firebase-api-key
+NG_APP_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
+NG_APP_FIREBASE_PROJECT_ID=your-project-id
+NG_APP_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
+NG_APP_FIREBASE_MESSAGING_SENDER_ID=123456789
+NG_APP_FIREBASE_APP_ID=1:123:web:abc123
+NG_APP_ADMIN_PASSWORD=your-secure-admin-password
+```
+
+> 📋 **Sécurité** : Le fichier `.env` contient vos clés privées et ne doit jamais être committée dans Git.
 
 5. Ajoutez les règles Firestore suivantes dans la console Firebase :
 
@@ -76,18 +80,24 @@ L'application sera disponible sur `http://localhost:4200`
 
 ```bash
 cd frontend
-ng build --configuration=production
+npm run build:prod
 ```
 
 Les fichiers de build seront dans `frontend/dist/frontend/`.
 
-## Déploiement sur Firebase Hosting
+## Déploiement
+
+### Netlify (Recommandé)
+
+Voir le guide complet : [NETLIFY_DEPLOYMENT.md](NETLIFY_DEPLOYMENT.md)
+
+### Firebase Hosting
 
 ```bash
 npm install -g firebase-tools
 firebase login
 firebase init hosting
-ng build --configuration=production
+npm run build:prod
 firebase deploy
 ```
 
@@ -115,4 +125,6 @@ Chaque repas coûte **750 XOF**. Le rapport mensuel calcule automatiquement : `J
 ## Accès administrateur
 
 - URL : `/admin/login`
-- Mot de passe par défaut : `admin123` (à modifier dans `environment.ts`)
+- Mot de passe : configurable via `NG_APP_ADMIN_PASSWORD` dans `.env`
+
+> 🔒 **Sécurité** : Utilisez un mot de passe fort pour la production. Générez-en un avec : `openssl rand -base64 32 | tr -d "=+/" | cut -c1-24`
